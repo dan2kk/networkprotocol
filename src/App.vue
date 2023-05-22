@@ -1,11 +1,18 @@
 <template>
-  <nav>
-    <router-link to="/">로그인</router-link> |
-    <router-link to="/about">비밀번호 찾기</router-link> |
-  </nav>
   <router-view/>
 </template>
+<script>
+export default {
+    name: "App",
+    computed:{
+        isLogined(){
+            return this.$store.getters.getIsLogined
+        }
+    }
 
+}
+
+</script>
 <style>
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
@@ -13,6 +20,8 @@
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+    height: 1280px;
+    width: 960px
 }
 
 nav {

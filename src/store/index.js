@@ -6,6 +6,7 @@ export default createStore({
       userId: "",
       userPw: "",
       userName: "",
+      userToken: "",
     },
     isLogined: false,
   },
@@ -29,6 +30,7 @@ export default createStore({
         state.userInfo.userId="";
         state.userInfo.userPw="";
         state.userInfo.userName="";
+        state.userInfo.userToken="";
         state.isLogined= false;
       }
     }
