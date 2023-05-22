@@ -24,8 +24,7 @@
 </template>
 
 <script>
-import Stomp from 'webstomp-client'
-import SockJS from 'sockjs-client'
+import {io} from 'socket.io-client'
 import axios from 'axios'
 import router from "@/router";
 export default {
@@ -36,9 +35,6 @@ export default {
             userPw:"",
             loginState: false,
         }
-    },
-    created(){
-        this.connect()
     },
     methods:{
         loginEnter(e){
@@ -84,30 +80,16 @@ export default {
         },
         connect(){
             const serverURL = "http://localhost:9876"
-            let socket = new SockJS(serverURL)
-            this.stompClient = Stomp.over(socket);
-            console.log("소켓연결을 시도합니다. 서버주소: ${serverURL}")
-            this.stompClient.connect(
-                {},
-                frame => {
-                    //success
-                    this.connected = true;
-                    console.log("연결 성공", frame);
-                    //server의 메세지 전송 endpoint를 subscribe한다
-                    //pub, sub 구조를 위해 stomp를 쓴다
-                    this.stompClient.subscribe("/send", res => {
-                        console.log("sub message:", res.body);
-
-                        //data를 json으로 parsing하고 list에 넣는다
-                        this.recvList.push(JSON.parse(res.body))
-                    });
-                },
-                error => {
-                    //fail
-                    console.log("연결 실패:",error);
-                    this.connected = false;
-                }
-            );
+            let socket = new io(serverURL)
+            socket.on("connect", ()=>{
+                console.log(socket.id)
+                this.connected = true;
+            },
+            error => {
+                //fail
+                console.log("연결 실패:",error);
+                this.connected = false;
+            })
         }
 
     }

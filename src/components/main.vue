@@ -4,7 +4,7 @@
 
 <script>
 import router from "@/router";
-
+import {io} from 'socket.io-client'
 export default {
     name: "main",
     data(){
@@ -16,6 +16,19 @@ export default {
         if(!this.isLogined){
             alert("옳바르지 않은 접근입니다!")
             router.push("/")
+        }
+        else{
+            const serverURL = "http://localhost:9876"
+            let socket = new io(serverURL)
+            socket.on("connect", ()=>{
+                console.log(socket.id)
+                this.connected = true;
+            },
+            error => {
+                //fail
+                console.log("연결 실패:",error);
+                this.connected = false;
+            })
         }
     },
     computed:{
