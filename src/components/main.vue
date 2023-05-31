@@ -18,7 +18,7 @@ export default {
             router.push("/")
         }
         else{
-            const serverURL = "http://localhost:9876"
+            const serverURL = this.$store.getters.getServerURL
             let socket = new io(serverURL)
             socket.on("connect", ()=>{
                 console.log(socket.id)

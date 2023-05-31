@@ -40,7 +40,7 @@ export default {
     },
     methods:{
         async create(){
-            const serverURL = "http://localhost:9876"
+            const serverURL = this.$store.getters.getServerURL
             console.log("회원가입 시도!")
             if(this.userId.length < 4){
                 alert('아이디 길이는 4 이상이어야 합니다.')

@@ -20,7 +20,7 @@ export default {
             if(e.keyCode === 13 && this.findId !=="") this.find()
         },
         async find(){
-            const serverURL = "http://localhost:9876";
+            const serverURL = this.$store.getters.getServerURL
             console.log("Find ID attempt, ID: "+this.findId);
             let findResult = (await axios.get(serverURL+'/login/find', {params: {id:this.findId}})).data
             if(!findResult.state){

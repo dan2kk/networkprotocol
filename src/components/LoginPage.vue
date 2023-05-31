@@ -41,22 +41,10 @@ export default {
             if(e.keyCode === 13 && this.userId !== '' && this.message !== ''){
                 this.login()
             }
-            //this.$store.commit("setIsLogined", true)
-        },
-        login1(){
-            alert("Test")
-            let loginInfo = {
-                userId: "dan2kk",
-                userPw: "wogh123",
-                userName: "정재호"
-            }
-            this.$store.commit("setuserInfo", loginInfo)
-            this.$store.commit("setIsLogined", true)
-            router.push("/main")
         },
         async login(){
             alert("Login")
-            const serverURL = "http://localhost:9876"
+            const serverURL = this.$store.getters.getServerURL
             console.log("Login attempt, ID: "+this.userId);
             console.log("PW: "+ this.userPw);
             const loginMessage ={
@@ -79,7 +67,7 @@ export default {
             }
         },
         connect(){
-            const serverURL = "http://localhost:9876"
+            const serverURL = this.$store.getters.getServerURL
             let socket = new io(serverURL)
             socket.on("connect", ()=>{
                 console.log(socket.id)

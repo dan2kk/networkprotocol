@@ -2,6 +2,7 @@ import { createStore } from 'vuex'
 
 export default createStore({
   state: {
+    serverURL: "https://localhost:9091",
     userInfo: {
       userId: "",
       userPw: "",
@@ -9,8 +10,12 @@ export default createStore({
       userToken: "",
     },
     isLogined: false,
+
   },
   getters: {
+    getServerURL(state){
+      return state.serverURL
+    },
     getUserInfo(state){
       return state.userInfo
     },
