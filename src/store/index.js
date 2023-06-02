@@ -1,4 +1,5 @@
 import { createStore } from 'vuex'
+import {io} from 'socket.io-client'
 
 export default createStore({
   state: {
@@ -7,10 +8,8 @@ export default createStore({
       userId: "",
       userPw: "",
       userName: "",
-      userToken: "",
     },
     isLogined: false,
-
   },
   getters: {
     getServerURL(state){
@@ -21,13 +20,14 @@ export default createStore({
     },
     getIsLogined(state){
       return state.isLogined
-    }
+    },
   },
   mutations: {
     setuserInfo(state, ui){
       state.userInfo.userId = ui.userId;
       state.userInfo.userPw = ui.userPw;
       state.userInfo.userName = ui.userName;
+      console.log(state.userInfo)
     },
     setIsLogined(state, tf){
       if(tf) state.isLogined = true;
@@ -38,7 +38,7 @@ export default createStore({
         state.userInfo.userToken="";
         state.isLogined= false;
       }
-    }
+    },
   },
   actions: {
   },

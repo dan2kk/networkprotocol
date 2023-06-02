@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build"
+    "build": "vue-cli-service build --dest /Users/jeongjaeho/discord/discord/public"
   },
   "dependencies": {
     "axios": "^1.2.3",

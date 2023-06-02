@@ -27,6 +27,7 @@
 import {io} from 'socket.io-client'
 import axios from 'axios'
 import router from "@/router";
+import {state} from "@/socket"
 export default {
     name: "LoginPage",
     data(){
@@ -61,9 +62,11 @@ export default {
                     userPw: this.userPw,
                     userName: loginResult.userName
                 }
+                console.log(loginInfo)
                 this.$store.commit("setuserInfo", loginInfo)
                 this.$store.commit("setIsLogined", true)
-                router.push("/main")
+                state.userName = loginResult.userName
+                await router.push("/main")
             }
         },
         connect(){
@@ -72,11 +75,6 @@ export default {
             socket.on("connect", ()=>{
                 console.log(socket.id)
                 this.connected = true;
-            },
-            error => {
-                //fail
-                console.log("연결 실패:",error);
-                this.connected = false;
             })
         }
 
