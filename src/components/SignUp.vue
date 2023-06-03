@@ -60,7 +60,7 @@ export default {
             }
             else{
                 alert('회원가입 완료!')
-                router.push({path:'/'})
+                await this.$router.push({ path: '/' })
             }
         },
     }

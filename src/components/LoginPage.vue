@@ -1,26 +1,26 @@
 <template>
-  <div id="login">
-      <div class="loginText">로그인</div>
-      <div class="loginBox">
-          <div class="idin">
-              <div>
-                  <input class="inputBox" type="text" v-model="userId" placeholder="ID"/>
-                  <img class="checkImg1" v-if="userId.length >= 4" src="../assets/ok.svg" alt="">
-              </div>
-          </div>
-          <div class="pwin">
-              <div>
-                  <input class="inputBox" type="password" v-model="userPw" placeholder="비밀번호"/>
-                  <img class="checkImg2" v-if="userPw.length >= 6" src="../assets/ok.svg" alt="">
-              </div>
-          </div>
-          <button class="loginButton" @click="login">로그인</button>
-      </div>
-      <nav class="nav">
-          <router-link to="/create">회원가입</router-link>  |
-          <router-link to="/find">비밀번호 찾기</router-link>  |
-      </nav>
-  </div>
+    <div id="login">
+        <header>
+            <h1 class="loginText">로그인</h1>
+        </header>
+        <main class="loginBox">
+            <div class="inputWrapper">
+                <input class="inputBox" type="text" v-model="userId" placeholder="ID"/>
+                <img class="checkImg1" v-if="userId.length >= 4" src="../assets/ok.svg" alt="">
+            </div>
+            <div class="inputWrapper">
+                <input class="inputBox" type="password" v-model="userPw" placeholder="비밀번호"/>
+                <img class="checkImg2" v-if="userPw.length >= 6" src="../assets/ok.svg" alt="">
+            </div>
+            <button class="loginButton" @click="login">로그인</button>
+        </main>
+        <nav class="nav">
+            <ul>
+                <li><router-link to="/create">회원가입</router-link></li>
+                <li><router-link to="/find">비밀번호 찾기</router-link></li>
+            </ul>
+        </nav>
+    </div>
 </template>
 
 <script>
@@ -84,60 +84,66 @@ export default {
 </script>
 
 <style lang="sass">
+// 전체 레이아웃 스타일
+#login
+    display: grid
+    grid-template-areas: "header" "main" "nav"
+    grid-gap: 1rem
+    align-items: center
+    justify-content: center
 
+// 로그인 텍스트 스타일
 .loginText
-    position: absolute
-    top: 50px
-    left: 60px
+    grid-area: header
     color: #FFC600
     text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25)
     font-family: "Noto Sans KR"
     font-weight: bold
     font-size: 24pt
 
+// 로그인 박스 스타일
 .loginBox
-    position: absolute
-    width: 300px
-    height: 300px
-    top: 100px
+    grid-area: main
 
-.idin
-    width: 200px
-    height: 50px
-    top: 10px
-.pwin
-  width: 200px
-  height: 50px
-  top: 10px
-.inputBox
-  height: 35px
-  width: 200px
-  border-width: 2px
-  border-radius: 8px
+    // 입력 필드 스타일
+    .inputWrapper
+        display: flex
+        justify-content: space-between
+        align-items: center
+        margin-bottom: 1rem
+
+        .inputBox
+            width: 200px
+            height: 35px
+            border-width: 2px
+            border-radius: 8px
+
+        // 체크 이미지 스타일
+        .checkImg1,
+        .checkImg2
+            height: 20px
+            width: 20px
+
+// 로그인 버튼 스타일
 .loginButton
-  height: 35px
-  width: 75px
-  background-color: #FFC600
-  border-width: 1px
-  border-radius: 8px
-  position: absolute
-  top: 110px
-  left: 250px
+    width: 100%
+    height: 35px
+    background-color: #FFC600
+    border-width: 1px
+    border-radius: 8px
+
+// 네비게이션 스타일
 .nav
-  position: absolute
-  top: 120px
-  left: 60px
-.checkImg2
-  height: 20px
-  width: 20px
-  position: absolute
-  top: 115px
-  left: 220px
-.checkImg1
-  height: 20px
-  width: 20px
-  position: absolute
-  top: 65px
-  left: 220px
+    grid-area: nav
+
+    ul
+        display: flex
+        gap: .5rem
+
+        li
+            list-style: none
+            &:not(:last-child)::after
+                content: "|"
+                margin-left: .5rem
 
 </style>

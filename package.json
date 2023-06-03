@@ -12,6 +12,7 @@
     "sass": "^1.62.1",
     "sass-loader": "^13.2.2",
     "socket.io-client": "^4.6.1",
+    "socket.io-p2p": "^2.2.0",
     "sockjs-client": "^1.6.1",
     "v-suggest": "^2.2.0",
     "vue": "^3.2.13",
@@ -23,7 +24,8 @@
     "@vue/cli-plugin-babel": "~5.0.0",
     "@vue/cli-plugin-router": "~5.0.0",
     "@vue/cli-plugin-vuex": "~5.0.0",
-    "@vue/cli-service": "~5.0.0"
+    "@vue/cli-service": "~5.0.0",
+    "stream-browserify": "^3.0.0"
   },
   "browserslist": [
     "> 1%",

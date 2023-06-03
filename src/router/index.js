@@ -3,6 +3,7 @@ import LoginPage from "@/components/LoginPage.vue";
 import PwFind from "@/components/PwFind.vue";
 import SignUp from "@/components/SignUp.vue";
 import MainPage from "@/components/MainPage.vue"
+import ChatPage from "@/components/Box/ChatPage.vue";
 const routes = [
   {
     path: '/',
@@ -23,6 +24,11 @@ const routes = [
     path: '/main',
     name: 'main',
     component: MainPage
+  },
+  {
+    path: '/chat',
+    name: 'chat',
+    component: ChatPage
   }
 
 ]

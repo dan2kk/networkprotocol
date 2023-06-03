@@ -3,7 +3,7 @@ import {io} from 'socket.io-client'
 
 export default createStore({
   state: {
-    serverURL: "https://localhost:9091",
+    serverURL: location.origin,
     userInfo: {
       userId: "",
       userPw: "",
