@@ -1,6 +1,5 @@
 import { reactive } from "vue";
 import { io } from "socket.io-client";
-import * as P2P from "socket.io-p2p";
 import store from "@/store/index"
 import router from "@/router";
 
@@ -21,13 +20,16 @@ const peerConnectionConfig = {
         {'urls': 'stun:stun.l.google.com:19302'},
     ]
 }
-let constraints = {
-    video: true,
-    audio: true
+export let constraints = {
+    video: false,
+    audio: false
 }
-export const socket = io(URL);
-
-//export const peerSocket  = new P2P(socket)
+export const socket1 = io(URL,  { transports: ['websocket'] });
+let P2P = require('socket.io-p2p');
+export const socket = new P2P(socket1,  {
+    numClients: 7,
+    autoUpgrade: false
+})
 
 socket.on("connect", () => {
     console.log("socket connected")
@@ -87,6 +89,7 @@ socket.on("message", (data)=>{
             break
     }
 })
+
 export function login(){
     if(!state.userName){
         state.userName= store.state.userInfo.userName
@@ -123,3 +126,39 @@ export function sendMessageToServer(msg){
         msg: msg
     }))
 }
+export const startStream = async () => {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+        const video = document.querySelector('video');
+        video.srcObject = stream;
+
+        video.onloadedmetadata = () => {
+            video.play();
+        }
+        console.log("localVideo started")
+        socket.emit('start-stream', JSON.stringify({
+            name: state.userName,
+            channel: state.nowChannel,
+            stream: stream
+        }));
+        socket.stream = stream;
+
+    } catch (err) {
+        console.error("Error in startStream: ", err);
+    }
+};
+
+
+socket.on('stream', (stream) => {
+    console.log(stream instanceof MediaStream)
+    let video = document.getElementById('remoteVideo');
+    if ("srcObject" in video) {
+        video.srcObject = stream;
+    } else {
+        video.src = window.URL.createObjectURL(stream);
+    }
+    video.onloadedmetadata = function() {
+        video.play();
+    }
+    console.log("stream event started")
+});

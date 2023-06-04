@@ -11,13 +11,13 @@
                 <button type="submit">Send</button>
             </form>
         </div>
-        <button @click="startVideoCall">Start Video</button>
-        <button @click="startAudioCall">Start Audio</button>
+        <button @click="switchVideoCall">Start Video</button>
+        <button @click="switchAudioCall">Start Audio</button>
     </div>
 </template>
 
 <script>
-import {state, sendMessageToServer} from "@/socket"
+import {state, sendMessageToServer, constraints, startStream} from "@/socket"
 
 export default {
     data() {
@@ -30,12 +30,21 @@ export default {
         sendMessage(){
             sendMessageToServer(this.newMessage)
             this.newMessage = ""
+        },
+        switchVideoCall(){
+            constraints.video = !constraints.video
+            startStream()
+        },
+        switchAudioCall(){
+            constraints.audio = !constraints.audio
+            startStream()
         }
     },
     computed:{
         getMessage(){
             return state.messageList
         }
+
     }
 }
 </script>
