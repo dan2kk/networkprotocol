@@ -2,6 +2,7 @@ import { reactive } from "vue";
 import { io } from "socket.io-client";
 import store from "@/store/index"
 import router from "@/router";
+import {Peer} from "peerjs"
 
 export const state = reactive({
     connected: false,
@@ -9,7 +10,8 @@ export const state = reactive({
     channelList: [], //channel 객체 들어옴
     userList: [],
     nowChannel: null,
-    messageList: []
+    messageList: [],
+    peerId: null
 });
 
 // "undefined" means the URL will be computed from the `window.location` object
@@ -21,16 +23,11 @@ const peerConnectionConfig = {
     ]
 }
 export let constraints = {
-    video: false,
-    audio: false
+    video: true,
+    audio: true
 }
-export const socket1 = io(URL,  { transports: ['websocket'] });
-let P2P = require('socket.io-p2p');
-export const socket = new P2P(socket1,  {
-    numClients: 7,
-    autoUpgrade: false
-})
 
+export const socket = io(URL);
 socket.on("connect", () => {
     console.log("socket connected")
     state.connected = true;
@@ -40,7 +37,7 @@ socket.on("disconnect", () => {
     console.log("socket disconnected")
     state.connected = false;
 });
-socket.on("message", (data)=>{
+socket.on("message", async (data)=>{
     try{
         data = JSON.parse(data)
     }
@@ -87,6 +84,24 @@ socket.on("message", (data)=>{
             })
             console.log(data.user + " "+data.msg)
             break
+        case "stream":
+            const stream = await navigator.mediaDevices.getUserMedia(constraints);
+            const video = document.querySelector('#localVideo');
+            console.log(data.peerId)
+            video.srcObject = stream
+            video.onloadedmetadata = () => {
+                video.play();
+            }
+            let call = p2pSocket.call(data.peerId, stream)
+            call.on("stream", (stream)=>{
+                const rVideo = document.querySelector('#remoteVideo');
+                rVideo.srcObject = stream
+                rVideo.onloadedmetadata = () => {
+                    rVideo.play();
+                }
+                console.log("remoteVideo started")
+            })
+            break
     }
 })
 
@@ -126,39 +141,30 @@ export function sendMessageToServer(msg){
         msg: msg
     }))
 }
+const p2pSocket = new Peer({config: peerConnectionConfig})
+p2pSocket.on('open', async function(id) {
+    state.peerId = id
+    console.log("p2pSocket opened id: ", state.peerId)
+});
 export const startStream = async () => {
     try {
         const stream = await navigator.mediaDevices.getUserMedia(constraints);
-        const video = document.querySelector('video');
+        const video = document.querySelector('#localVideo');
         video.srcObject = stream;
-
         video.onloadedmetadata = () => {
             video.play();
         }
         console.log("localVideo started")
-        socket.emit('start-stream', JSON.stringify({
+        p2pSocket.on('call', function(call){
+            call.answer(stream)
+        })
+        console.log("send server request")
+        socket.emit("start-stream", JSON.stringify({
+            peerId: state.peerId,
             name: state.userName,
-            channel: state.nowChannel,
-            stream: stream
-        }));
-        socket.stream = stream;
-
+            channel: state.nowChannel
+        }))
     } catch (err) {
         console.error("Error in startStream: ", err);
     }
 };
-
-
-socket.on('stream', (stream) => {
-    console.log(stream instanceof MediaStream)
-    let video = document.getElementById('remoteVideo');
-    if ("srcObject" in video) {
-        video.srcObject = stream;
-    } else {
-        video.src = window.URL.createObjectURL(stream);
-    }
-    video.onloadedmetadata = function() {
-        video.play();
-    }
-    console.log("stream event started")
-});

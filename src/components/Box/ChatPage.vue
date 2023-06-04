@@ -32,11 +32,11 @@ export default {
             this.newMessage = ""
         },
         switchVideoCall(){
-            constraints.video = !constraints.video
+            constraints.video = true
             startStream()
         },
         switchAudioCall(){
-            constraints.audio = !constraints.audio
+            constraints.video = false
             startStream()
         }
     },
