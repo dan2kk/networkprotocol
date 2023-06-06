@@ -1,13 +1,13 @@
 <template>
     <div class="chat-container">
-        <div class="video-chat-local">
-            <video id="localVideo" autoplay playsinline></video>
-        </div>
         <div class="video-chat-remote-list">
             <div id="video-chat-remote-users" v-for="user in this.getUserList">
-                <video class="remoteVideo" id="user.name" autoplay playsinline></video>
+                <video class="remoteVideo" :id="user.name" autoplay playsinline></video>
                 <label>{{user.name}}</label>
             </div>
+        </div>
+        <div class="video-chat-local">
+            <video id="localVideo" autoplay playsinline></video>
         </div>
         <div class="chat">
             <div id="messages" v-for="message in this.getMessage">{{message.user}}  ) {{message.msg}} ||  </div>
@@ -48,10 +48,12 @@ export default {
         },
         switchVideoCall(){
             constraints.video = true
+            constraints.audio = true
             startStream()
         },
         switchAudioCall(){
             constraints.video = false
+            constraints.audio = true
             startStream()
         }
     },
@@ -73,14 +75,18 @@ export default {
 .chat-container {
     display: flex; flex-direction: column;
 }
-.video-chat {
-    display: flex; height: 50vh;
+.video-chat-remote-list {
+    display: flex;
+    height: 25%;
+    width: 100%;
+    float: left
 }
 #localVideo {
     width: 50%; object-fit: cover;
 }
 .remoteVideo{
-    width: 25%; object-fit: cover;
+    width: 25%;
+    object-fit: cover;
 }
 
 .chat {

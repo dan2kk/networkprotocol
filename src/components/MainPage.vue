@@ -9,33 +9,36 @@
     <div class="channellist">
         <TextBox class="channelName" text="방번호" size="100" bgc="pink"/>
         <TextBox class="channelName" text="체널 이름" size="300" bgc="pink"/>
-        <TextBox class="channelUsers" text="방생성" size="100" bgc="pink"/>
+        <TextBox class="channelUsers" @click="openCreateModal" text="방생성" size="100" bgc="pink"/>
     </div>
-    <div class="channellist" v-for="item in this.getChannelInfo">
-        <TextBox class="channelNumber" :text="item.number" size="100" bgc="pink"/>
+    <div class="channellist" v-for="item in this.getChannelInfo" @click="clickEvent(item)">
+        <TextBox class="channelNumber" :text="item.channelNumber" size="100" bgc="pink"/>
         <TextBox class="channelName" :text="item.name" size="300" bgc="pink"/>
-        <TextBox class="channelUsers" :text="item.users" size="100" bgc="pink"/>
+        <TextBox class="channelUsers" :text="item.users.length" size="100" bgc="pink"/>
     </div>
-    <!--
-    <CustomModal class="custom-modal" v-if="this.onCreateModal" v-on:modal-close="closeCreateModal"/>
-    <CustomModal class="custom-modal" v-if="this.onJoinModal" v-on:modal-close="closeJoinModal"/>
-    -->
+    <ChannelCreateModal class="channelCreateModal" v-if="this.onCreateModal" v-on:modal-close="closeCreateModal"/>
+    <ChannelJoinModal class="custom-modal" :item="this.onJoinChannel" v-if="this.onJoinModal" v-on:modal-close="closeJoinModal"/>
 </template>
 
 <script>
 import router from "@/router";
 import {login, createChannel, joinChannel,refreshChannel, socket, state} from "@/socket";
 import TextBox from "@/components/Box/TextBox.vue";
+import ChannelCreateModal from "@/components/ChannelCreateModal.vue";
+import ChannelJoinModal from "@/components/ChannelJoinModal.vue";
 
 export default {
     components:{
-        TextBox
+        TextBox,
+        ChannelCreateModal,
+        ChannelJoinModal,
     },
     name: "MainPage",
     data(){
         return{
             onCreateModal : false,
-            onJoinModal: false
+            onJoinModal: false,
+            onJoinChannel: null
         }
     },
     created(){
@@ -73,11 +76,12 @@ export default {
             socket.disconnect()
         },
         async clickEvent(item){
-            if(item.isLocked){
+            if(item.locked){
+                this.onJoinChannel = item
                 this.onJoinModal = true
             }
             else{
-                await joinChannel(item.name)
+                await joinChannel(item.name, "")
             }
         },
         closeCreateModal(){
@@ -85,7 +89,10 @@ export default {
         },
         closeJoinModal(){
             this.onJoinModal = false
-        }
+        },
+        openCreateModal(){
+            this.onCreateModal = true
+        },
     }
 }
 </script>
@@ -102,12 +109,10 @@ export default {
 button
     height: 30px
     background-color: #ffffff
-
 .channellist
     display: flex
     width: 500px
     .channelName, .channelUsers, .channelNumber
         margin: 0.5rem
         font-size: 14px
-
 </style>

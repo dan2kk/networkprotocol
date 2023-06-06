@@ -38,6 +38,7 @@ socket.on("disconnect", () => {
     state.connected = false;
 });
 socket.on("message", async (data)=>{
+    console.log(data)
     try{
         data = JSON.parse(data)
     }
@@ -67,14 +68,19 @@ socket.on("message", async (data)=>{
             if(data.success){
                 state.nowChannel = data.channelName
                 state.userList = data.candidate
-                router.push("/chat")
+                for(let i=0; i<state.userList.length; i++){
+                    if(state.userList[i].name == state.userName){ //자기자신은 제거
+                        state.userList.splice(i, 0)
+                    }
+                }
+                await router.push("/chat")
             }
             else{
                 console.error(data.msg)
             }
             break
         case "userJoin":
-            state.userList.push(data.name)
+            state.userList.push(data.user)
             state.messageList.push({
                 user:"서버 관리자",
                 msg: data.user.name+"님이 참가하셨습니다."
@@ -93,19 +99,16 @@ socket.on("message", async (data)=>{
             console.log(data.user + " "+data.msg)
             break
         case "stream":
-            const stream = await navigator.mediaDevices.getUserMedia(constraints);
+            let stream = null
+            if(constraints.video || constraints.audio){
+                stream = await navigator.mediaDevices.getUserMedia(constraints);
+            }
             const video = document.querySelector('#localVideo');
             video.srcObject = stream
             video.onloadedmetadata = () => {
                 video.play();
             }
-            let call = null
-            for(let i=0; i<state.userList.length; i++){
-                if(state.userList[i].name === data.name){
-                    call = p2pSocket.call(data.peerId, stream)
-                    break
-                }
-            }
+            let call = p2pSocket.call(data.peerId, stream)
             call.on("stream", (stream)=>{
                 const rVideo = document.querySelector('#'+data.name);
                 rVideo.srcObject = stream

@@ -27,7 +27,7 @@
 import {io} from 'socket.io-client'
 import axios from 'axios'
 import router from "@/router";
-import {state} from "@/socket"
+import {refreshChannel, state} from "@/socket"
 export default {
     name: "LoginPage",
     data(){
@@ -36,6 +36,9 @@ export default {
             userPw:"",
             loginState: false,
         }
+    },
+    created(){
+        setInterval(refreshChannel, 5000);
     },
     methods:{
         async login(){
