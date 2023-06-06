@@ -9,7 +9,7 @@
                 <img class="checkImg1" v-if="userId.length >= 4" src="../assets/ok.svg" alt="">
             </div>
             <div class="inputWrapper">
-                <input class="inputBox" type="password" v-model="userPw" placeholder="비밀번호"/>
+                <input class="inputBox" type="password" v-model="userPw" @keyup.enter="login" placeholder="비밀번호"/>
                 <img class="checkImg2" v-if="userPw.length >= 6" src="../assets/ok.svg" alt="">
             </div>
             <button class="loginButton" @click="login">로그인</button>
@@ -38,11 +38,6 @@ export default {
         }
     },
     methods:{
-        loginEnter(e){
-            if(e.keyCode === 13 && this.userId !== '' && this.message !== ''){
-                this.login()
-            }
-        },
         async login(){
             alert("Login")
             const serverURL = this.$store.getters.getServerURL

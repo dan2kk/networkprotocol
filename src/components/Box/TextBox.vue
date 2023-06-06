@@ -1,6 +1,6 @@
 <template>
-    <div :style= "setStyle" :class= "[`l-menu-text-box`, size || ``, color || ``]">
-        <div class="l-menu-text-box-text valign-text-middle">
+    <div :style= "setStyle" :class= "[`text-box`, size || ``, color || ``, bgc || '']">
+        <div class="text-box-text valign-text-middle">
             {{ text }}
         </div>
     </div>
@@ -9,19 +9,23 @@
 <script>
 export default {
     name: "TextBox",
-    props: ["text", "size", "color"],
+    props: ["text", "size", "color", "bgc"],
     computed:{
         setStyle(){
             let size
             let color
+            let bgc
             if (this.size == undefined) size = "150px"
             else size = this.size
 
             if (this.color == undefined) color = "black"
             else color = this.color
+            if (this.bgc == undefined) bgc = "black"
+            else bgc = this.bgc
             return {
                 '--size' : `${size}px`,
-                '--color' : `${color}`
+                '--color' : `${color}`,
+                '--background-color' : `${bgc}`
             }
         }
     }
@@ -31,18 +35,18 @@ export default {
 <style lang="sass">
 @import '@/../variables'
 
-.l-menu-text-box
+.text-box
   align-items: flex-start
   display: flex
   height: 48px
   position: relative
   width: var(--size)
-  background-color: $bon-jour
-  border: 1px white solid
+  background-color: var(--background-color)
+  border: 0px white solid
   border-radius: 7px
 
 
-.l-menu-text-box-text
+.text-box-text
   align-self: stretch
   flex: 1
   letter-spacing: 0

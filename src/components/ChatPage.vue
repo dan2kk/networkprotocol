@@ -1,8 +1,13 @@
 <template>
     <div class="chat-container">
-        <div class="video-chat">
+        <div class="video-chat-local">
             <video id="localVideo" autoplay playsinline></video>
-            <video id="remoteVideo" autoplay playsinline></video>
+        </div>
+        <div class="video-chat-remote-list">
+            <div id="video-chat-remote-users" v-for="user in this.getUserList">
+                <video class="remoteVideo" id="user.name" autoplay playsinline></video>
+                <label>{{user.name}}</label>
+            </div>
         </div>
         <div class="chat">
             <div id="messages" v-for="message in this.getMessage">{{message.user}}  ) {{message.msg}} ||  </div>
@@ -11,19 +16,29 @@
                 <button type="submit">Send</button>
             </form>
         </div>
-        <button @click="switchVideoCall">Start Video</button>
-        <button @click="switchAudioCall">Start Audio</button>
+        <button @click="switchVideoCall">VideoChat</button>
+        <button @click="switchAudioCall">AudioChat</button>
     </div>
 </template>
 
 <script>
 import {state, sendMessageToServer, constraints, startStream} from "@/socket"
+import router from "@/router";
 
 export default {
     data() {
         return{
             newMessage: "",
         };
+    },
+    created(){
+        if(!this.$store.getters.getIsLogined || !state.nowChannel){
+            alert("옳바르지 않은 접근입니다!")
+            router.push("/")
+        }
+        else{
+
+        }
     },
     methods:
     {
@@ -41,8 +56,14 @@ export default {
         }
     },
     computed:{
+        state() {
+            return state
+        },
         getMessage(){
             return state.messageList
+        },
+        getUserList(){
+            return state.userList
         }
 
     }
@@ -55,9 +76,13 @@ export default {
 .video-chat {
     display: flex; height: 50vh;
 }
-video {
+#localVideo {
     width: 50%; object-fit: cover;
 }
+.remoteVideo{
+    width: 25%; object-fit: cover;
+}
+
 .chat {
     display: flex;
     flex-direction: column;

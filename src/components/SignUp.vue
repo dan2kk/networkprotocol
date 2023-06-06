@@ -1,23 +1,23 @@
 <template>
     <div id="login">
         <div class="loginText">회원가입</div>
-        <div class="loginBox">
+        <div class="loginBox" @keyup.enter="create">
             <div class="idin">
                 <div>
                     <input class="inputBox" type="text" v-model="userId" placeholder="ID"/>
-                    <img class="checkImg1" v-if="userId.length >= 4" src="../assets/ok.svg" alt="">
+                    <img class="checkImg" v-if="userId.length >= 4" src="../assets/ok.svg" alt="">
                 </div>
             </div>
             <div class="pwin">
                 <div>
-                    <input class="inputBox" type="text" v-model="userPw" placeholder="비밀번호"/>
-                    <img class="checkImg2" v-if="userPw.length >= 6" src="../assets/ok.svg" alt="">
+                    <input class="inputBox" type="password" v-model="userPw" placeholder="비밀번호"/>
+                    <img class="checkImg" v-if="userPw.length >= 6" src="../assets/ok.svg" alt="">
                 </div>
             </div>
             <div class="nickin">
                 <div>
                     <input class="inputBox" type="text" v-model="userName" placeholder="닉네임"/>
-                    <img class="checkImg3" v-if="userName.length >= 3" src="../assets/ok.svg" alt="">
+                    <img class="checkImg" v-if="userName.length >= 3" src="../assets/ok.svg" alt="">
                 </div>
             </div>
             <button class="createButton" @click="create">회원가입</button>
@@ -83,11 +83,8 @@ export default {
     height: 50px
     top: 10px
   
-.checkImg3
+.checkImg
     height: 20px
     width: 20px
-    position: absolute
-    top: 165px
-    left: 220px
   
 </style>

@@ -3,7 +3,7 @@ import {io} from 'socket.io-client'
 
 export default createStore({
   state: {
-    serverURL: location.origin,
+    serverURL: process.env.NODE_ENV === "production" ? window.location.protocol + "//" + window.location.host : "https://localhost:9091",
     userInfo: {
       userId: "",
       userPw: "",

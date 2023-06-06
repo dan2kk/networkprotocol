@@ -15,7 +15,7 @@ export const state = reactive({
 });
 
 // "undefined" means the URL will be computed from the `window.location` object
-const URL = process.env.NODE_ENV === "production" ? undefined : "https://localhost:9091";
+const URL = process.env.NODE_ENV === "production" ? window.location.protocol + "//" + window.location.host : "https://localhost:9091"
 const peerConnectionConfig = {
     'iceServers': [
         {'urls': 'stun:stun.stunprotocol.org:3478'},
@@ -73,6 +73,14 @@ socket.on("message", async (data)=>{
                 console.error(data.msg)
             }
             break
+        case "userJoin":
+            state.userList.push(data.name)
+            state.messageList.push({
+                user:"서버 관리자",
+                msg: data.user.name+"님이 참가하셨습니다."
+            })
+            console.log("userJoin")
+            break
         case "channelList":
             state.channelList = data.channels
             console.log(state.channelList)
@@ -87,14 +95,19 @@ socket.on("message", async (data)=>{
         case "stream":
             const stream = await navigator.mediaDevices.getUserMedia(constraints);
             const video = document.querySelector('#localVideo');
-            console.log(data.peerId)
             video.srcObject = stream
             video.onloadedmetadata = () => {
                 video.play();
             }
-            let call = p2pSocket.call(data.peerId, stream)
+            let call = null
+            for(let i=0; i<state.userList.length; i++){
+                if(state.userList[i].name === data.name){
+                    call = p2pSocket.call(data.peerId, stream)
+                    break
+                }
+            }
             call.on("stream", (stream)=>{
-                const rVideo = document.querySelector('#remoteVideo');
+                const rVideo = document.querySelector('#'+data.name);
                 rVideo.srcObject = stream
                 rVideo.onloadedmetadata = () => {
                     rVideo.play();

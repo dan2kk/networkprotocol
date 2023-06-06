@@ -1,6 +1,6 @@
 <template>
     <div id="find">
-        찾으려는 ID: <input v-model="findId" type="text" @keyup="findEnter"/>
+        찾으려는 ID: <input v-model="findId" type="text" @keyup.enter="find"/>
         <button @click="find">비밀번호 찾기</button>
     </div>
 </template>
@@ -16,9 +16,6 @@ export default {
         }
     },
     methods:{
-        findEnter(e){
-            if(e.keyCode === 13 && this.findId !=="") this.find()
-        },
         async find(){
             const serverURL = this.$store.getters.getServerURL
             console.log("Find ID attempt, ID: "+this.findId);
@@ -29,7 +26,6 @@ export default {
             else{
                 alert('입력하신 아이디의 비밀번호는 '+ findResult.findPw +' 입니다')
             }
-            alert("Test")
             router.push({path:'/'})
         }
     }
