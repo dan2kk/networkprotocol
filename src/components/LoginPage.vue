@@ -37,19 +37,11 @@ export default {
             loginState: false,
         }
     },
-    created(){
-        setInterval(refreshChannel, 5000);
-    },
     methods:{
         async login(){
-            alert("Login")
             const serverURL = this.$store.getters.getServerURL
             console.log("Login attempt, ID: "+this.userId);
             console.log("PW: "+ this.userPw);
-            const loginMessage ={
-                userID: this.userId,
-                userPW: this.userPw
-            };
             let loginResult = (await axios.get(serverURL+'/login', {params: {id: this.userId, pw: this.userPw}})).data
             if(!loginResult.state){
                 alert('아이디 혹은 비밀번호가 옳바르지 않습니다. 다시 로그인해주세요!')

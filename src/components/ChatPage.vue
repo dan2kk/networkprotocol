@@ -16,13 +16,13 @@
                 <button type="submit">Send</button>
             </form>
         </div>
-        <button @click="switchVideoCall">VideoChat</button>
-        <button @click="switchAudioCall">AudioChat</button>
+        <button @click="switchVideoCall">비디오 On/Off</button>
+        <button @click="startVideoCall">화상/음성 채팅 시작</button>
     </div>
 </template>
 
 <script>
-import {state, sendMessageToServer, constraints, startStream} from "@/socket"
+import {state, sendMessageToServer, constraints, startStream, endStream} from "@/socket"
 import router from "@/router";
 
 export default {
@@ -36,9 +36,6 @@ export default {
             alert("옳바르지 않은 접근입니다!")
             router.push("/")
         }
-        else{
-
-        }
     },
     methods:
     {
@@ -47,13 +44,11 @@ export default {
             this.newMessage = ""
         },
         switchVideoCall(){
-            constraints.video = true
-            constraints.audio = true
-            startStream()
+            constraints.video = !constraints.video
+            alert("비디오 활성화: "+constraints.video)
         },
-        switchAudioCall(){
-            constraints.video = false
-            constraints.audio = true
+        startVideoCall(){
+            endStream()
             startStream()
         }
     },

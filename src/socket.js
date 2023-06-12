@@ -11,7 +11,8 @@ export const state = reactive({
     userList: [],
     nowChannel: null,
     messageList: [],
-    peerId: null
+    peerId: null,
+    socketList: []
 });
 
 // "undefined" means the URL will be computed from the `window.location` object
@@ -70,7 +71,8 @@ socket.on("message", async (data)=>{
                 state.userList = data.candidate
                 for(let i=0; i<state.userList.length; i++){
                     if(state.userList[i].name == state.userName){ //자기자신은 제거
-                        state.userList.splice(i, 0)
+                        state.userList.splice(i, 1)
+                        break
                     }
                 }
                 await router.push("/chat")
@@ -99,19 +101,23 @@ socket.on("message", async (data)=>{
             console.log(data.user + " "+data.msg)
             break
         case "stream":
-            let stream = null
+            let stream1 = null
+            let result= confirm(data.name+"님과의 화상채팅에 참가하겠습니까?")
+            if(!result){
+                break
+            }
             if(constraints.video || constraints.audio){
-                stream = await navigator.mediaDevices.getUserMedia(constraints);
+                stream1 = await navigator.mediaDevices.getUserMedia(constraints);
             }
             const video = document.querySelector('#localVideo');
-            video.srcObject = stream
+            video.srcObject = stream1
             video.onloadedmetadata = () => {
                 video.play();
             }
-            let call = p2pSocket.call(data.peerId, stream)
-            call.on("stream", (stream)=>{
-                const rVideo = document.querySelector('#'+data.name);
-                rVideo.srcObject = stream
+            let call = p2pSocket.call(data.peerId, stream1)
+            call.on("stream", (Rstream)=>{
+                let rVideo = document.querySelector('#'+data.name);
+                rVideo.srcObject = Rstream
                 rVideo.onloadedmetadata = () => {
                     rVideo.play();
                 }
@@ -133,6 +139,7 @@ export function login(){
 export function createChannel(name, islocked, password){
     socket.emit("channelCreate", JSON.stringify({
         name: state.userName,
+        peerId: state.peerId,
         channelName: name,
         isLocked: islocked,
         password: password
@@ -142,6 +149,7 @@ export function createChannel(name, islocked, password){
 export function joinChannel(name, pw){
     socket.emit("channelJoin", JSON.stringify({
         name: state.userName,
+        peerId: state.peerId,
         channelName: name,
         password: pw
     }))
@@ -171,10 +179,26 @@ export const startStream = async () => {
             video.play();
         }
         console.log("localVideo started")
-        p2pSocket.on('call', function(call){
-            call.answer(stream)
+        p2pSocket.on('call', function(mediaConn){
+            console.log(mediaConn)
+            state.socketList.push(mediaConn)
+            mediaConn.answer(stream)
+            mediaConn.on('stream', (Rstream2)=>{
+                for(let i=0;i <state.userList.length;i++) {
+                    console.log(state.userList[i])
+                    console.log(mediaConn.peer)
+                    console.log(Rstream2)
+                    if (mediaConn.peer === state.userList[i].peerId) {
+                        let Remotevideo = document.querySelector('#' + state.userList[i].name);
+                        Remotevideo.srcObject = Rstream2;
+                        Remotevideo.onloadedmetadata = () => {
+                            Remotevideo.play();
+                        }
+                    }
+                }
+            })
         })
-        console.log("send server request")
+        console.log("Remotevideo startsend server request")
         socket.emit("start-stream", JSON.stringify({
             peerId: state.peerId,
             name: state.userName,
@@ -184,3 +208,10 @@ export const startStream = async () => {
         console.error("Error in startStream: ", err);
     }
 };
+export const endStream = async () => {
+    for(let socket of state.socketList){
+        console.log(socket)
+        socket.close()
+    }
+}
+

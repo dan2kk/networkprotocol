@@ -6,8 +6,8 @@
         </div>
         <div class= "custom-modal-card">
             <main>
-                <input class="inputBox" type="text" v-model="channelName" placeholder="채널 이름"/>
-                <label class="custom-container">
+                <input class="inputBox" type="text" v-model="channelName" @keyup.enter="createChannel(this.channelName, this.channelLocked, this.channelPw)" placeholder="채널 이름"/>
+                <label class="custom-container"> 채널 잠금 설정
                     <input checked="custom-checked" type="checkbox" @click="checkClicked">
                     <span class="custom-checkmark"></span>
                 </label>

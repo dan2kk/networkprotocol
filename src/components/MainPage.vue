@@ -38,10 +38,12 @@ export default {
         return{
             onCreateModal : false,
             onJoinModal: false,
-            onJoinChannel: null
+            onJoinChannel: null,
+            refresh: null
         }
     },
     created(){
+        this.refresh= setInterval(refreshChannel, 5000);
         if(!this.isLogined){
             alert("옳바르지 않은 접근입니다!")
             router.push("/")
@@ -76,6 +78,7 @@ export default {
             socket.disconnect()
         },
         async clickEvent(item){
+            await clearInterval(this.refresh)
             if(item.locked){
                 this.onJoinChannel = item
                 this.onJoinModal = true
